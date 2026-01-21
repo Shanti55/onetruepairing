@@ -1,0 +1,173 @@
+.aon-woocart-wrap { width:100%;  -webkit-transition: all 0.5s linear; -moz-transition: all 0.5s linear; -ms-transition: all 0.5s linear; -o-transition: all 0.5s linear; transition: all 0.5s linear;  }
+.aon-woocart-inner { width:100%; } 
+.show-color-demo .aon-woocart-wrap {  -webkit-box-shadow: 0 0 50px 0px rgba(0,0,0,0.7); box-shadow: 0 0 50px 0px rgba(0,0,0,0.7); }
+.aon-woocart-close { width:30px; height:30px; background:#E91F1F; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; -webkit-transition: all 0.5s linear; -moz-transition: all 0.5s linear; -ms-transition: all 0.5s linear; -o-transition: all 0.5s linear; transition: all 0.5s linear; }
+.show-color-demo .aon-woocart-close { right:100%; }
+.admin-bar .aon-color-demo-close {  top: 30px; }
+.aon-woocart-header { display:flex; justify-content:space-between; align-items:center; padding:20px 30px; line-height:1; border-bottom:1px solid #ddd; }
+.aon-woocart-head-left h4 { margin:0px; line-height:1; font-size:20px; }
+.aon-woocart-head-right { font-size:14px; color:#222; text-transform:uppercase; }
+.aon-woocart-head-right i { display:inline-flex; padding:5px; width:30px; height:30px; background:#ddd; justify-content:center; align-items:center; cursor:pointer; margin-left:5px; }
+.aon-woocart-head-right i:hover { background:#E73235; color:#fff; }
+.aon-woocart-body {  padding:30px; padding:30px; max-height:500px; overflow: auto; }
+.aon-woocart-servi-box:not(:last-child) { margin-bottom:30px; }
+.aon-woocart-servi-author {  background: #f0f0f0;  padding: 5px 15px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; }
+.aon-woo-ser-au-name { font-weight: 700;  color: #222;  font-size: 16px; }
+.aon-woo-ser-au-close { color: #222;  font-size: 16px; cursor: pointer; }
+.aon-woo-ser-au-close:hover { color: #E73235; }
+.removeproviderservices:hover { color: #E73235; }
+.aon-woocart-servi-row { margin-bottom:10px; border-bottom:1px solid #ddd; padding-bottom:10px; }
+.aon-woocart-servi-row:last-child { margin-bottom:0px; border-bottom:none; padding-bottom:0px; }
+.aon-woocart-servi-name { font-weight: 700;  color: #222;  font-size: 15px; margin-bottom:2px; display:flex; justify-content:space-between; align-items:center; }
+.aon-woocart-servi-date-time {display:flex; justify-content:space-between; align-items:center; }
+.aon-woo-ser-date-price { color: #222; font-weight:700;  }
+.aon-woocart-ser-close { line-height:1; }
+.aon-woocart-ser-close .removeservice:hover { color:#E73235; }
+.aon-woocart-footer { padding:30px; border-top:1px solid #ddd; }
+.aon-woocart-foo-top { display:flex; justify-content:space-between; align-items:center; line-height:1; margin-bottom:25px; }
+.aon-woocart-foo-top:last-child { margin-bottom:0px; }
+.aon-woocart-foo-top-left,
+.aon-woocart-foo-top-right { font-weight:700; color:#222; font-size:16px; text-transform:uppercase; } 
+.aon-woocart-foo-top-right { color:#3DC446; } 
+.aon-woocart-foo-bot { display:flex; justify-content:space-between; align-items:center; margin:0px -5px; }
+.aon-woocart-foo-bot .btn { width:100%; font-weight:700;}
+.aon-woocart-foo-bot-left,
+.aon-woocart-foo-bot-right { padding:0px 5px; width:50%; } 
+@media only screen and (max-width:480px){
+.aon-woocart-header { padding: 10px 15px; }
+.aon-woocart-body { padding: 15px; }
+.aon-woocart-footer { padding: 15px; }    
+.aon-woocart-head-right i { padding: 3px;  width: 20px;  height: 20px; }
+.aon-woocart-body { height: calc(100vh - 160px); }
+.aon-woocart-head-right { font-size: 12px; }
+}
+@media only screen and (max-width:410px){
+.aon-woocart-wrap { max-width:300px;  }
+.aon-woocart-head-left h4 { font-size: 18px; }
+}
+@media only screen and (max-width:360px){
+.aon-woocart-close { width: 20px;  height: 20px; }
+}
+.aon-booking-wrap { padding:0px; border:1px solid #ddd; border-radius:10px; }
+.aon-booking-form {  width:100%; position:relative; }
+@media only screen and (max-width:991px){
+  .aon-booking-form .aon-form-title{font-size: 30px;}
+}
+@media only screen and (max-width:767px){
+  .aon-booking-form .aon-form-title{font-size: 26px;}
+}
+@media only screen and (max-width:420px){
+  .aon-booking-form .sf-radio-row{display: block !important;}
+  .aon-booking-form .sf-radio-row .sf-radio-checkbox{width: 100% !important; margin-bottom:-1px;}
+  .aon-booking-form .aon-form-top{display: block !important;}
+  .aon-booking-form .aon-form-top-left {display: block !important;}
+}	
+.aon-book-plan { list-style:none; margin:0px; width:100%; padding:0px; }
+.aon-book-plan li { background:#fff; padding:15px; border:1px solid #ddd; border-radius:5px; margin-bottom:15px; }
+.aon-book-plan li:last-child { margin-bottom:0px; }
+.aon-book-plan li strong {  padding-left:10px; color:#222; display:block; }
+.aon-book-plan li p { padding-left:10px; color:#777;  }
+.aon-form-logo { display:table; margin:auto; }
+.aon-form-top { border:1px solid #ddd; padding:15px; margin:30px 0px 20px; border-radius:5px; background:#f4f5f9; }
+.btn-back-to-home {  position: absolute;  top: 30px;  right: 30px;  line-height: 20px;  border: 1px solid  var(--primary);  padding: 5px 15px;  border-radius: 5px;  font-size: 14px;  font-weight: 600; }
+.btn-back-to-home:hover,
+.btn-back-to-home:focus,
+.btn-back-to-home:active { background: var(--primary); color:#fff; }
+.aon-form-doc-pic { width:50px; height:50px; border-radius:100%; overflow:hidden; margin-right:15px; background:#ddd; border-radius:50px; }
+.aon-form-doc-pic { width:50px; height:50px; border-radius:100%; overflow:hidden; }
+.aon-form-doc-info strong,
+.aon-form-doc-info span { display:block;}
+.aon-form-doc-info strong { color:#222; }
+.aon-form-doc-info span { color:#777; font-size:14px;}
+.aon-form-consul-free  { text-align:right; }
+.aon-form-consul-free  > strong,
+.aon-form-consul-free  > span { display:block; }
+.aon-form-consul-free  > strong { color:#222; }
+.aon-form-consul-free  > span { color: var(--primary); }
+.aon-form-back-btn {  background: none;  padding: 2px 10px;  color:#555;  border: 1px solid #ddd;  border-radius: 5px; }
+@media only screen and (max-width:768px){
+.aon-form-logo { float:left; width: 120px; margin:0; } 
+.btn-back-to-home {  padding: 2px 10px;  font-size: 12px; top:15px; right:15px; }
+.aon-booking-form { padding: 15px; }
+}
+#multistep_form fieldset:not(:first-of-type) { 
+    display: none; 
+}
+.aon-booking-area { max-width:800px; margin:auto; background:#fff; }
+.aon-booking-area .panel { border:none; }
+ .aon-booking-next-prev-btn { padding: 30px; border-top: 1px solid #ddd; }
+.aon-booking-btn { outline: none;  color: #fff; padding:10px 15px; letter-spacing: 1px;  position: relative; overflow: hidden; cursor: pointer;  display: inline-table;  background-color:#ffb600;
+    border: none;  font-size: 16px;  transition: 0.5s all ease;  border-radius:5px; font-weight:500; line-height: 1.2; display: inline-flex; align-items: center; }
+.aon-booking-btn:hover, 
+.aon-booking-btn:active, 
+.aon-booking-btn:focus {  color: #fff; background-color:#e8a90d; } 
+.booking-panel-step-one, 
+.booking-panel-step-two, 
+.booking-panel-step-three, 
+.booking-panel-step-four, 
+.booking-panel-step-five {  padding:0px; }
+.aon-woocart-form { padding:20px 15px 10px; display:flex; flex-wrap:wrap; }
+.aon-form-top-right {  display: flex;  justify-content: right;  margin-bottom: 10px; }
+.aon-form-back-btn {  background: none;
+  padding: 2px 10px;
+  color: var(--primary);
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+.form-select.error,
+.form-control.error {  background: #F8E3E3;  border-color: #deb2b2;  box-shadow:none; }
+.form-select.error + .error,
+.form-control.error + .error {  background: #eb6767;  color: #fff;  padding: 2px 10px;  line-height: 1.4;  border-radius: 3px;  font-size: 13px;  position: relative; }
+.form-select.error + .error::after,
+.form-control.error + .error::after {  content: "";  width: 0;  height: 0;  border-style: solid;  border-width: 0 6px 6px 6px;  border-color: transparent transparent #eb6767 transparent;
+  position: absolute;  bottom: 100%;  left: 10px; }
+.has-error .input-group + .help-block {  background: #eb6767; display:table; color: #fff;  padding: 2px 10px;  line-height: 1.4;  border-radius: 3px;  font-size: 13px;  position: relative; }
+.has-error .input-group + .help-block:after {  content: "";  width: 0;  height: 0;  border-style: solid;  border-width: 0 6px 6px 6px;  border-color: transparent transparent #eb6767 transparent;
+  position: absolute;  bottom: 100%;  left: 10px; }
+.cartitem-notavl .aon-woocart-ser-name,
+.cartitem-notavl .aon-woocart-servi-date-time { opacity:0.4; }
+.aon-booking-pay { padding:30px; }
+.aon-booking-paylist {  list-style: none;  width: auto;  max-width:none; margin:0px; padding: 10px 20px;  border: 1px solid #ddd; }
+.aon-booking-paylist li { padding: 5px 0 !important; border-top: 1px solid #ddd; font-weight: 600; font-size: 14px; }
+.aon-booking-paylist li strong {  float: right;   color: #555555; }
+.aon-booking-paylist li:first-child {  border: none; }
+.aon-booking-paylist li:last-child {  border-width: 2px; }
+#sf-bookform-submitarea {  clear: both;  padding: 30px 30px 0px;  margin: 0px -30px; }
+.aon-booking-pay-card { padding:35px 0px 0px; }
+.aon-booking-pay-card #sf-payment-options { margin:0px !important; }
+.aon-btn-woocart {  position: fixed;  bottom: 30px;  left: 30px;  padding: 20px;  border: 1px solid #222;  border-radius: 5px; background:#fff; z-index:999; text-align:center; 
+-webkit-box-shadow:0 0 20px 5px rgba(0,0,0,0.1); box-shadow:0 0 20px 5px rgba(0,0,0,0.1); } 
+.aon-cart-closen i { border:1px solid #222; color:#222; width:24px;  height:24px; display:flex;  justify-content:center;  align-items:center;  position:absolute;  top:-12px;  right:-1px;  border-radius: 3px;  background: #fff; cursor: pointer; }
+.aon-woocart-hide .aon-cart-closen i {  border: 1px solid #222;  width: 42px;  height: 42px; font-size:20px;  top: -1px;  right: -1px;  background: #222;  color: #fff; }
+.aon-woocart-hide .aon-cart-closen i:before { content:"\e9ca"; }
+.aon-btn-woocart #havecoupononsmry {  padding-top: 10px; max-width: 180px; }
+.aon-btn-woocart #havecoupononsmry [data-target="#addbookingcoupon" ] {  padding: 0;  background: none;  text-decoration: underline;  font-weight: 500; }
+.aon-btn-woocart #havecoupononsmry [data-target="#addbookingcoupon" ] i {  display:none; }
+.aon-btn-woocart #addbookingcoupon  { margin-bottom:0px !important; }
+.aon-btn-woocart #addbookingcoupon .form-control { border-radius:5px; padding:7px 70px 7px 12px; height: 42px; }
+.aon-btn-woocart #addbookingcoupon .verifybookingcoupon {  padding: 5px 10px;  border-radius: 5px;  background: #222;  color: #fff !important;  font-size: 12px;  top: 7px;  right: 7px; }
+.aon-btn-woocart .aon-coupon-applied {    padding-top: 10px;  display: inline-flex;  margin: auto;  color: #4ab92b;  align-items: center;}
+.aon-btn-woocart .aon-coupon-applied .fa {  display: inline-flex;  align-items: center;  justify-content: center;  font-size: 8px;  width: 16px;  height: 16px;  border-radius: 20px;  border: 1px solid #4ab92b;  margin-right: 3px; }
+.aon-woocart-hide .aon-cart-top  { display:none; }
+.aon-woocart-hide .aon-cart-bot  { display:none; }
+.aon-woocart-hide #havecoupononsmry  { display:none !important; }
+.aon-woocart-hide .aon-coupon-applied  { display:none !important; }
+.aon-cart-top .feather-shopping-cart { display:flex; width:40px;  height:40px;  border:1px solid #777;  border-radius:30px;  align-items:center;  justify-content:center;  margin:0px auto 10px; color: #555; font-size: 16px;}
+#sfcarttotal {  font-size: 24px;  font-weight: 600;  color: #222; }
+.group_view_cart_link { border:1px solid #555; color:#555; padding:4px 15px; display:table; margin:5px auto 0px; border-radius:5px; font-size:14px; }
+.group_view_cart_link:hover { border:1px solid #222; color:#222; }
+#cartbtnonsmry .group_view_cart_link  { outline: none;  color: #fff; padding:10px 15px; letter-spacing: 1px;  position: relative; overflow: hidden; cursor: pointer;  display: inline-table;  background-color:#ffb600;
+    border: none;  font-size: 16px;  transition: 0.5s all ease;  border-radius:5px; font-weight:500; line-height: 1.2; display: inline-flex; align-items: center; margin-top:10px; display: block;  font-size: 12px;  text-transform: uppercase;  }
+#cartbtnonsmry .group_view_cart_link :hover, 
+#cartbtnonsmry .group_view_cart_link :active, 
+#cartbtnonsmry .group_view_cart_link :focus {  color: #fff !important; background-color:#e8a90d; } 
+.login-section {  border: 1px solid #ddd;  padding: 15px;  border-radius: 5px;  margin: 0px 20px 30px;  color: #ddd; }
+.login-section a {  color: #555; }
+#cartbtnonsmry { border:1px solid #ddd; border-radius:5px; padding:0px;  }
+#cartbtnonsmry .group_view_cart_link { display:table; margin: auto; }
+.aon-emptycart-inner {  padding: 30px;  text-align: center;  font-size: 20px; }
+ 
+.sf-summery-box #smryboxwrap {  margin: 10px 20px 10px; }
+.sf-summery-box .sf-summery-inr {  margin: 10px 0px 0px; }
+.sf-summery-box #cartbtnonsmry {  border: 1px solid #ddd;  border-radius: 5px;  padding: 20px;  margin: 15px 20px; }
+.sf-summery-box .viewcoupon-bx { margin:0px 15px; }

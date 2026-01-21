@@ -1,0 +1,212 @@
+
+<aside id="sidebar" class="collapse collapse-horizontal border-end">
+    <!-- Content For Sidebar -->
+    <div class="h-100">
+        <div class="sidebar-logo ms-2">
+            <a href="{{ route('admins.dashboard') }}" class="pe-md-0">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <img src="https://ui-avatars.com/api/?background=0D8ABC&color=FFF&name={{urlencode(auth()->user()->name)}}" class="avatar img-fluid rounded" alt="">
+                    <span>{{ auth()->user()->name }}</span>
+                </div>
+            </a>
+        </div>
+        <ul class="sidebar-nav">
+            <li class="sidebar-item">
+                <a href="{{ route('frontend.home') }}" class="sidebar-link text-dark bg-light border-0 fw-semibold {{ request()->routeIs('frontend.home') ? 'active' : '' }}">
+                    <i class="bi bi-arrow-left-circle pe-2"></i>
+                    Back To Website
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ route('admins.dashboard') }}" class="sidebar-link {{ request()->routeIs('home') ? 'active' : '' }}"
+                   wire:navigate>
+                    <i class="bi bi-house pe-2"></i>
+                    Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="{{ route('admins.notifications.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('admins.notifications.index') ? 'active' : '' }}">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-bell pe-2"></i>
+                        <span>Notifications</span>
+                        <span class="ps-2">@include('partials.notifications._normal_unread-counts',['id'=>1])</span>
+                    </div>
+
+                </a>
+            </li>
+
+            @if(canAccessModule('enquiry'))
+            <li class="sidebar-item">
+                <a href="{{ route('enquiry.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('enquiry.index') ? 'active' : '' }}">
+                    <i class="bi bi-grid pe-2"></i>
+                    Enquiry
+                </a>
+            </li>
+            @endif
+
+            @if(canAccessModule('jobs'))
+            <li class="sidebar-item">
+                <a href="{{ route('job-posts.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('job-posts.index') ? 'active' : '' }}">
+                    <i class="bi bi-box-seam pe-2"></i>
+                    Jobs
+                </a>
+            </li>
+            @endif
+
+            @if(canAccessModule('admins'))
+            <li class="sidebar-item">
+                <a href="{{ route('admins.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('admins.index') ? 'active' : '' }}">
+                    <i class="bi bi-people pe-2"></i>
+                    Admins
+                </a>
+            </li>
+            @endif
+
+@if(canAccessModule('Bids'))
+<li class="sidebar-item">
+    <a href="{{ route('admin.manage-bids.index') }}" wire:navigate
+       class="sidebar-link {{ request()->routeIs('admin.manage-bids.index') ? 'active' : '' }}">
+        <i class="bi bi-hammer pe-2"></i> Manage Bids
+    </a>
+</li>
+@endif
+            @if(canAccessModule('users'))
+            <li class="sidebar-item">
+                <a href="{{ route('users.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('users.index') ? 'active' : '' }}">
+                    <i class="bi bi-people pe-2"></i>
+                    Users
+                </a>
+            </li>
+            @endif
+
+            @if(canAccessModule('service_providers'))
+            <li class="sidebar-item">
+                <a href="{{ route('serviceproviders.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('serviceproviders.index') ? 'active' : '' }}">
+                    <i class="bi bi-people pe-2"></i>
+                    Service Providers
+                </a>
+            </li>
+            @endif
+
+            @if(canAccessModule('categories'))
+            <li class="sidebar-item">
+                <a href="{{ route('categories.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('categories.index') ? 'active' : '' }}">
+                    <i class="bi bi-grid pe-2"></i>
+                    Categories
+                </a>
+            </li>
+            @endif
+
+            @if(canAccessModule('services'))
+            <li class="sidebar-item">
+                <a href="{{ route('services.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('services.index') ? 'active' : '' }}">
+                    <i class="bi bi-person-gear pe-2"></i>
+                    Services
+                </a>
+            </li>
+            @endif
+            @if(canAccessModule('blogs'))
+            <li class="sidebar-item">
+                <a href="{{ route('blogs.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('blogs.index') ? 'active' : '' }}">
+                    <i class="bi bi-pencil-square pe-2"></i>
+                    Blogs
+                </a>
+            </li>
+            @endif
+
+            @if(canAccessModule('subscription_plan'))
+            <li class="sidebar-item">
+                <a href="{{ route('subscription-plans.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('subscription-plans.index') ? 'active' : '' }}">
+                    <i class="bi bi-star pe-2"></i>
+                    Subscription Plans
+                </a>
+            </li>
+            @endif
+
+            @if(canAccessModule('roles_permissions'))
+            <li class="sidebar-item">
+                <a href="{{ route('roles-permissions.index') }}" wire:navigate
+                   class="sidebar-link {{ request()->routeIs('roles-permissions.index') ? 'active' : '' }}">
+                    <i class="bi bi-person-lines-fill pe-2"></i>
+                    Roles & Permissions
+                </a>
+            </li>
+            @endif
+
+            @if(canAccessModule('reports'))
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link collapsed" data-bs-target="#reports" data-bs-toggle="collapse"
+                   aria-expanded="false"><i class="bi bi-file-earmark-bar-graph pe-2"></i>
+                    Reports
+                </a>
+                <ul id="reports" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#reports-sidebar">
+                    <li class="sidebar-item">
+                        <a href="{{ route('job-accepted-declined.index') }}" wire:navigate class="sidebar-link {{ request()->routeIs('job-accepted-declined.index') ? 'active' : '' }}">Job Accepted/Declined</a>
+                    </li>
+                </ul>
+            </li>
+            @endif
+
+            @if(canAccessModule('billing'))
+            <li class="sidebar-item">
+                <a href="#" class="sidebar-link collapsed" data-bs-target="#billing" data-bs-toggle="collapse"
+                   aria-expanded="false"><i class="bi bi-receipt pe-2"></i>
+                    Billing
+                </a>
+                <ul id="billing" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                    <li class="sidebar-item">
+                        <a href="{{ route('billing.subscriptions.index') }}" wire:navigate class="sidebar-link {{ request()->routeIs('billing.subscriptions.index') ? 'active' : '' }}">Subscriptions</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{{ route('billing.payment-requests.index') }}" class="sidebar-link" wire:navigate>Payment Request</a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="{{ route('billing.payments.index') }}" class="sidebar-link" wire:navigate>Payments</a>
+                    </li>
+                </ul>
+            </li>
+            @endif
+
+
+{{--            <li class="sidebar-item">--}}
+{{--                <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse"--}}
+{{--                   aria-expanded="false"><i class="bi bi-receipt pe-2"></i>--}}
+{{--                    Sales--}}
+{{--                </a>--}}
+{{--                <ul id="posts" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">--}}
+{{--                    <li class="sidebar-item">--}}
+{{--                        <a href="" wire:navigate class="sidebar-link">All Sales</a>--}}
+{{--                    </li>--}}
+{{--                    <li class="sidebar-item">--}}
+{{--                        <a href="" class="sidebar-link" wire:navigate>Add Sale</a>--}}
+{{--                    </li>--}}
+
+{{--                </ul>--}}
+{{--            </li>--}}
+
+            <!--Settings-->
+            @if(canAccessModule('settings'))
+            <li class="sidebar-item border-top border-light">
+                <a href="{{ route('settings.index') }}" wire:navigate
+                   class="sidebar-link">
+                    <i class="bi bi-gear pe-2"></i>
+                    Settings
+                </a>
+            </li>
+            @endif
+
+
+
+        </ul>
+    </div>
+</aside>

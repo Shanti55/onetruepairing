@@ -1,0 +1,17 @@
+{
+    "name": "Control F",
+    "short_name": "CTRLF",
+    "start_url": "/",
+    "background_color": "#0454fa",
+    "description": "Find the most trusted, in demand vendors",
+    "display": "fullscreen",
+    "theme_color": "#0454fa",
+    "icons": [
+        {
+            "src": "ctrlf.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}
