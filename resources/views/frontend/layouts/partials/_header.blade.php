@@ -23,7 +23,7 @@
                 <li><a href="{{ route('frontend.browse-listings.index') }}" class="{{ request()->routeIs('frontend.browse-listings.index') ? 'active' : '' }}">Listing</a></li>
 
                 <li><a href="{{ route('frontend.job-posts.createOrUpdate') }}" class="{{ request()->routeIs('frontend.job-posts.createOrUpdate') ? 'active' : '' }}">Post a Job</a></li>
-                <li><a href="{{ route('frontend.jobs.index') }}" class="{{ request()->routeIs('frontend.jobs.index') ? 'active' : '' }}">Jobs</a></li>
+                <li><a href="{{ route('frontend.jobs.index') }}" class="{{ request()->routeIs('frontend.jobs.index') ? 'active' : '' }}">Project Auctions</a></li>
                 <li><a href="{{ route('frontend.blogs') }}" class="{{ request()->routeIs('frontend.blogs') ? 'active' : '' }}">Blogs</a></li>
                 <li><a href="{{ route('frontend.contact') }}" class="{{ request()->routeIs('frontend.contact') ? 'active' : '' }}">Contact Us</a></li>
                 @if(auth()->user())

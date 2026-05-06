@@ -3,21 +3,36 @@
 namespace App\Http\Controllers\ServiceProviders;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\JobPost;
-use App\Models\Service;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Yajra\DataTables\Facades\DataTables;
 
 class MyNotificationsController extends Controller
 {
-
     public function index(Request $request)
     {
-        return view('service-provider-panel.notifications.index',['user'=>auth()->user(),'profile'=>auth()->user()->serviceproviderprofile() ? auth()->user()->serviceproviderprofile()->first() : null]);
+        $user = auth()->user();
+        
+        // Notifications fetch karna pagination ke saath
+        $notifications = $user->notifications()->paginate(15);
+
+        return view('service-provider-panel.notifications.index', [
+            'user' => $user,
+            'notifications' => $notifications,
+            'profile' => $user->serviceproviderprofile() ? $user->serviceproviderprofile()->first() : null
+        ]);
     }
 
+    // Single Notification ko Read mark karne ke liye
+    public function markAsRead($id)
+    {
+        $notification = auth()->user()->notifications()->findOrFail($id);
+        $notification->markAsRead();
+        return back()->with('success', 'Notification marked as read');
+    }
 
+    // Saari Notifications ko ek saath Read mark karne ke liye (Optional but useful)
+    public function markAllRead()
+    {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back()->with('success', 'All notifications marked as read');
+    }
 }

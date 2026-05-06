@@ -2,21 +2,27 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class JobBid extends Model
 {
-protected $fillable = [
-    'job_post_id', 
-    'vendor_id', 
-    'amount', 
-    'message', 
-    // 'duration', // Ye column zaroori hai
-    'attachment',
-    'status'
-];
+    use HasFactory;
 
-    public function job()
+    protected $fillable = [
+        'job_post_id', 
+        'vendor_id', 
+        'amount', 
+        'message', 
+        'status', 
+        'attachment', 
+        'previous_amount',
+        // 🔥 YE DONO ADD KARNA ZAROORI HAI:
+        'created_at',
+        'updated_at'
+    ];
+
+    public function jobPost()
     {
         return $this->belongsTo(JobPost::class, 'job_post_id');
     }

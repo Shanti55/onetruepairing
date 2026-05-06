@@ -5,7 +5,8 @@ namespace App\Enums;
 enum PaymentStatus: string
 {
     case PENDING = 'pending';
-    case COMPLETED = 'completed';
+    // Is line ko 'completed' karein kyunki aapne tinker se yahi set kiya hai
+    case COMPLETED = 'completed'; 
     case FAILED = 'failed';
     case REFUNDED = 'refunded';
     case CANCELLED = 'cancelled';
@@ -22,6 +23,4 @@ enum PaymentStatus: string
             self::UN_PAID => 'soft-warning',
         };
     }
-
-
 }

@@ -20,7 +20,7 @@
 
                 <div class="card mt-3 border-0 shadow">
                     <div class="card-header border-0">
-                        <h5 class="text-dark"><i class="bi bi-tag-fill"></i> Serviceprovider Information</h5>
+                        <h5 class="text-dark"><i class="bi bi-tag-fill"></i> Service provider Information</h5>
                     </div>
                     <div class="card-body">
                         <div class="row mb-2">

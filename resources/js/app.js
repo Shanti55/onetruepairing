@@ -1,4 +1,7 @@
 import './bootstrap';
+import Alpine from 'alpinejs'   // ✅ ADD THIS
+window.Alpine = Alpine
+Alpine.start()    
 
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;

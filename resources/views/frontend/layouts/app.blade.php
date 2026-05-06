@@ -20,6 +20,7 @@
             s0.parentNode.insertBefore(s1,s0);
         })();
     </script>
+ 
 
     <!--End of Tawk.to Script-->
     <!-- Fonts -->
@@ -31,7 +32,7 @@
 
     @vite('resources/sass/app.scss')
     @vite('resources/js/jquery.js')
-{{--    @vite('resources/js/jqueryui.js')--}}
+{{--    @vite('resources/js/')--}}
 
     @vite(['resources/sass/main.scss', 'resources/js/app.js', 'resources/js/main.js'])
 

@@ -24,6 +24,8 @@ class JobPostsController extends Controller
         return view('frontend.jobs.job-posts.createOrUpdate',compact('categories','services'));
     }
 
+    
+
     public function storeOrUpdate(Request $request)
     {
         $request->validate([
@@ -50,6 +52,7 @@ class JobPostsController extends Controller
         return response()->json(['message' => 'Job Post Created Successfully!']);
 
     }
+    
 
 
 }

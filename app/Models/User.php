@@ -145,4 +145,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function referredBy(){
         return $this->belongsTo(User::class,'referred_by');
     }
+
+    // app/Models/User.php mein add karein
+public function receivesBroadcastNotificationsOn(): string
+{
+    return 'App.Models.User.'.$this->id;
+}
 }

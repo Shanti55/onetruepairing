@@ -1,6 +1,5 @@
-
-    <nav x-data="navigation()" class=" py-3 border-top navbar-expand fixed-bottom d-block d-lg-none  bottom-bar bg-white"
-         data-turbolinks-permanent>
+<nav x-data="{}" class="py-3 border-top navbar-expand fixed-bottom d-block d-lg-none bottom-bar bg-white"
+     data-turbolinks-permanent>       
 
         <ul class="navbar-nav d-flex align-items-center justify-content-around mx-auto" style="flex: 1">
             <div class="col text-center m-0">

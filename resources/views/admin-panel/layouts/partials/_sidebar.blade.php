@@ -23,18 +23,16 @@
                     <i class="bi bi-house pe-2"></i>
                     Dashboard
                 </a>
-            </li>
-            <li class="sidebar-item">
-                <a href="{{ route('admins.notifications.index') }}" wire:navigate
-                   class="sidebar-link {{ request()->routeIs('admins.notifications.index') ? 'active' : '' }}">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-bell pe-2"></i>
-                        <span>Notifications</span>
-                        <span class="ps-2">@include('partials.notifications._normal_unread-counts',['id'=>1])</span>
-                    </div>
-
-                </a>
-            </li>
+           <li class="sidebar-item">
+    <a href="{{ route('admins.notifications.index') }}"
+       class="sidebar-link {{ request()->routeIs('admins.notifications.index') ? 'active' : '' }}">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-bell pe-2"></i>
+            <span>Notifications</span>
+            <span class="ps-2">@include('partials.notifications._normal_unread-counts',['id'=>1])</span>
+        </div>
+    </a>
+</li>
 
             @if(canAccessModule('enquiry'))
             <li class="sidebar-item">
@@ -56,6 +54,123 @@
             </li>
             @endif
 
+
+            {{-- ✅ Auctions Progress — naya section --}}
+{{-- ✅ Auctions Progress --}}
+{{-- ✅ Auctions Progress --}}
+@if(canAccessModule('jobs'))
+<li class="sidebar-item">
+    <a href="#" class="sidebar-link collapsed"
+       data-bs-target="#auctionsProgress"
+       data-bs-toggle="collapse">
+        <i class="bi bi-graph-up-arrow pe-2"></i>
+        Auctions Progress
+    </a>
+
+    <ul id="auctionsProgress" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+
+        {{-- 🟡 Upcoming --}}
+        <li class="sidebar-item">
+            <a href="{{ route('job-posts.index') }}?status=upcoming"
+               class="sidebar-link d-flex align-items-center gap-2">
+                <span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;"></span>
+                Upcoming
+
+                @php
+                $upcoming = \App\Models\JobPost::where('auction_status','pending')->count();
+                @endphp
+
+                @if($upcoming > 0)
+                    <span class="badge ms-auto" style="background:#fef3c7;color:#b45309;">
+                        {{ $upcoming }}
+                    </span>
+                @endif
+            </a>
+        </li>
+
+        {{-- 🟢 Live --}}
+        <li class="sidebar-item">
+            <a href="{{ route('job-posts.index') }}?status=live"
+               class="sidebar-link d-flex align-items-center gap-2">
+                <span style="width:8px;height:8px;border-radius:50%;background:#10b981;animation:blink 1.2s infinite;"></span>
+                Live
+
+                @php 
+                $live = \App\Models\JobPost::where('auction_status','open')->count(); 
+                @endphp
+
+                @if($live > 0)
+                    <span class="badge ms-auto" style="background:#dcfce7;color:#15803d;">
+                        {{ $live }}
+                    </span>
+                @endif
+            </a>
+        </li>
+
+        {{-- 🟣 Under Verification --}}
+        <li class="sidebar-item">
+            <a href="{{ route('job-posts.index') }}?status=under_verification"
+               class="sidebar-link d-flex align-items-center gap-2">
+                <span style="width:8px;height:8px;border-radius:50%;background:#8b5cf6;"></span>
+                Under Verification
+
+                @php 
+                $underVerif = \App\Models\JobPost::where('auction_status','closed')
+                                ->whereNull('assigned_to')
+                                ->where('status','under verification') // ✅ FIX
+                                ->count(); 
+                @endphp
+
+                @if($underVerif > 0)
+                    <span class="badge ms-auto" style="background:#f5f3ff;color:#7c3aed;">
+                        {{ $underVerif }}
+                    </span>
+                @endif
+            </a>
+        </li>
+
+        {{-- ⚫ Closed (Hired) --}}
+        <li class="sidebar-item">
+            <a href="{{ route('job-posts.index') }}?status=closed"
+               class="sidebar-link d-flex align-items-center gap-2">
+                <span style="width:8px;height:8px;border-radius:50%;background:#6b7280;"></span>
+                Closed (Hired)
+
+                @php 
+                $closed = \App\Models\JobPost::where('auction_status','closed')
+                            ->whereNotNull('assigned_to')
+                            ->where('status','assigned') // ✅ FIX
+                            ->count(); 
+                @endphp
+
+                @if($closed > 0)
+                    <span class="badge ms-auto" style="background:#f3f4f6;color:#374151;">
+                        {{ $closed }}
+                    </span>
+                @endif
+            </a>
+        </li>
+
+    </ul>
+</li>
+@endif
+<style>
+@keyframes blink {
+    0%,100% { opacity:1; }
+    50%      { opacity:0.3; }
+}
+</style>
+
+            @if(canAccessModule('jobs'))
+<li class="sidebar-item">
+    <a href="{{ route('admin.auction.room') }}" wire:navigate
+       class="sidebar-link {{ request()->routeIs('admin.auction.room') ? 'active' : '' }}">
+        <i class="bi bi-person-check-fill pe-2"></i>
+        Registration Status
+    </a>
+</li>
+@endif
+
             @if(canAccessModule('admins'))
             <li class="sidebar-item">
                 <a href="{{ route('admins.index') }}" wire:navigate
@@ -65,6 +180,9 @@
                 </a>
             </li>
             @endif
+             
+
+             
 
 @if(canAccessModule('Bids'))
 <li class="sidebar-item">
@@ -177,6 +295,7 @@
             </li>
             @endif
 
+            
 
 {{--            <li class="sidebar-item">--}}
 {{--                <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse"--}}

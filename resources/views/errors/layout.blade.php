@@ -31,7 +31,7 @@
 
     @vite('resources/sass/app.scss')
     @vite('resources/js/jquery.js')
-    {{--    @vite('resources/js/jqueryui.js')--}}
+    
 
     @vite(['resources/sass/main.scss', 'resources/js/app.js', 'resources/js/main.js'])
 

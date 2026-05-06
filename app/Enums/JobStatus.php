@@ -15,6 +15,23 @@ enum JobStatus: string
     case UNDER_VERIFICATION = 'under verification';
     case VERIFIED = 'verified';
 
+    // Yeh method frontend par dikhane ke liye labels return karega
+    public function label(): string
+    {
+        return match ($this) {
+            self::PENDING => 'Upcoming', // Database mein 'pending' rahega, par dikhega 'Upcoming'
+            self::OPEN => 'Open',
+            self::ASSIGNED => 'Assigned',
+            self::ON_HOLD => 'On Hold',
+            self::CLOSED => 'Closed',
+            self::COMPLETED => 'Completed',
+            self::NOT_STARTED => 'Not Started',
+            self::IN_PROGRESS => 'In Progress',
+            self::UNDER_VERIFICATION => 'Under Verification',
+            self::VERIFIED => 'Verified',
+        };
+    }
+
     public function color(): string
     {
         return match ($this) {
@@ -46,5 +63,4 @@ enum JobStatus: string
             self::VERIFIED => 'text-success',
         };
     }
-
 }

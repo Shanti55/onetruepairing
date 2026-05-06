@@ -1,11 +1,13 @@
-
 <div class="modal fade" id="jobPostModal" aria-hidden="true">
     <div class="modal-dialog modal-lg my-5">
         <div class="modal-content">
             <div class="modal-header">
                 <h6 class="modal-title fw-bold" id="modelHeading"></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="jobPostForm" class="form-horizontal">
+                @csrf 
+
                 <div class="modal-body">
                     <input type="hidden" name="id" id="id">
 
@@ -111,7 +113,6 @@
                                     @foreach(\App\Enums\JobStatus::cases() as $status)
                                         <option value="{{ $status->value }}">{{ $status->name }}</option>
                                     @endforeach
-
                                 </select>
                                 <div class="invalid-feedback">Invalid feedback</div>
                             </div>
@@ -125,19 +126,15 @@
                                     @foreach($serviceProviders as $provider)
                                         <option value="{{ $provider->id }}">{{ $provider->serviceproviderprofile->company_name ?? $provider->name }}</option>
                                     @endforeach
-
                                 </select>
                                 <div class="invalid-feedback">Invalid feedback</div>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
 
                 <div class="modal-footer bg-light d-flex justify-content-end py-1">
-                    <button type="submit" class="btn btn-primary shadow-sm" id="save">Save
-                    </button>
+                    <button type="submit" class="btn btn-primary shadow-sm" id="save">Save</button>
                 </div>
             </form>
         </div>

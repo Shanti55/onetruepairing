@@ -14,6 +14,8 @@ use Yajra\DataTables\Facades\DataTables;
 class BillingSubscriptionsController extends Controller
 {
     public function index(Request $request)
+
+    
     {
         if(!canAccessModule('billing'))
             return abort(404);

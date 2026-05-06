@@ -318,7 +318,66 @@
                     </div>
                 </div>
 
+</div>
+{{-- ── Hero Slider Banners ── --}}
+<div class="row mt-4">
+    <div class="col-12">
+        <h6 class="border-top py-3">
+            <i class="bi bi-images me-2"></i>Hero Slider Banners
+            <small class="text-muted fw-normal ms-2">(Recommended: 1440 × 500px, JPG/PNG/WebP)</small>
+        </h6>
+    </div>
+
+    @foreach([1,2,3] as $n)
+    <div class="col-lg-4 mb-3">
+        <div class="card border shadow-sm h-100">
+            <div class="card-header bg-light d-flex align-items-center justify-content-between">
+                <span class="fw-bold small">
+                    <i class="bi bi-image me-1"></i>Banner {{ $n }}
+                </span>
+                @if($n == 1)<span class="badge bg-success">Slide 1</span>@endif
+                @if($n == 2)<span class="badge bg-primary">Slide 2</span>@endif
+                @if($n == 3)<span class="badge bg-warning text-dark">Slide 3</span>@endif
             </div>
+            <div class="card-body">
+
+                {{-- Preview --}}
+                <div id="hero_banner_preview_{{ $n }}" class="mb-3">
+                    @if($setting && $setting->{"hero_banner_{$n}"})
+                        <img src="{{ url($setting->{"hero_banner_{$n}"}) }}"
+                             class="img-fluid rounded w-100"
+                             style="height:130px;object-fit:cover;">
+                        <p class="text-success small mt-1 mb-0">
+                            <i class="bi bi-check-circle me-1"></i>Uploaded
+                        </p>
+                    @else
+                        <div class="bg-light border rounded d-flex align-items-center justify-content-center"
+                             style="height:130px;border-style:dashed !important;">
+                            <div class="text-center text-muted">
+                                <i class="bi bi-image fs-2 d-block mb-1"></i>
+                                <small>No image yet</small>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Upload --}}
+                <input type="file"
+                       name="hero_banner_{{ $n }}"
+                       id="hero_banner_input_{{ $n }}"
+                       class="form-control form-control-sm"
+                       accept="image/jpeg,image/png,image/webp">
+                <div class="form-text small">
+                    1024× 500px — design in Canva with text, then upload.
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @endforeach
+
+</div>
+{{-- ── /Hero Slider Banners ── --}}
             <div class="card-footer bg-white text-end">
                 <button type="submit" class="btn btn-primary shadow-sm" id="save">Save</button>
             </div>
