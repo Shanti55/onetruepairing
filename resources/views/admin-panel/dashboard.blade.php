@@ -33,20 +33,40 @@
     </div>
 
     @php
-    $adminCounts           = \App\Models\User::where('role','admin')->count();
-    $serviceProviderCounts = \App\Models\User::where('role','service-provider')->count();
-    $userCounts            = \App\Models\User::where('role','user')->count();
+        $now = now();
 
-    // ✅ New/Upcoming — pending + verified + under verification
-    $newJobCounts        = \App\Models\JobPost::whereIn('status',['pending','verified','under verification'])->count();
-    $underVerifyCounts   = \App\Models\JobPost::where('status','under verification')->count();
-    $liveAuctionCounts   = \App\Models\JobPost::where('auction_status','live')->count();
-    $closedAuctionCounts = \App\Models\JobPost::whereIn('status',['closed','assigned'])->count();
-    $completedCounts     = \App\Models\JobPost::where('status','completed')->count();
-    $totalBids           = \App\Models\JobBid::count();
-    $totalRegistrations  = \App\Models\Payment::where('payment_for','job_registration')->where('status','complete')->count();
-    $pendingRefunds      = \App\Models\Payment::where('refund_status','pending')->count();
-@endphp
+        $adminCounts           = \App\Models\User::where('role','admin')->count();
+        $serviceProviderCounts = \App\Models\User::where('role','service-provider')->count();
+        $userCounts            = \App\Models\User::where('role','user')->count();
+
+        // ✅ Upcoming — auction_status = 'pending' (matches table filter)
+        $newJobCounts = \App\Models\JobPost::where('auction_status','pending')->count();
+
+        // ✅ Under Verification — closed auction, not yet assigned
+        $underVerifyCounts = \App\Models\JobPost::where('auction_status','closed')
+                                ->whereNull('assigned_to')
+                                ->where('status','under verification')
+                                ->count();
+
+        // ✅ Live — auction_status = 'open' AND auction_end > now (not expired)
+        $liveAuctionCounts = \App\Models\JobPost::where('auction_status','open')
+                                ->where('auction_end', '>', $now)
+                                ->count();
+
+        // ✅ Closed / Hired — assigned_to set hai
+        $closedAuctionCounts = \App\Models\JobPost::where('auction_status','closed')
+                                ->whereNotNull('assigned_to')
+                                ->where('status','assigned')
+                                ->count();
+
+        // ✅ Completed
+        $completedCounts = \App\Models\JobPost::where('status','completed')->count();
+
+        $totalBids          = \App\Models\JobBid::count();
+        $totalRegistrations = \App\Models\Payment::where('payment_for','job_registration')
+                                ->where('status','complete')->count();
+        $pendingRefunds     = \App\Models\Payment::where('refund_status','pending')->count();
+    @endphp
 
     <div class="row g-3 mb-2">
         {{-- Welcome --}}
@@ -98,7 +118,6 @@
                 <div class="stat-label">Total Users</div>
             </a>
         </div>
-        
 
         {{-- Total Bids --}}
         <div class="col-lg-4 col-md-6">
@@ -112,10 +131,9 @@
             </a>
         </div>
 
-        {{-- Paid Registrations - FIXED ROUTE NAME --}}
+        {{-- Paid Registrations --}}
         <div class="col-lg-4 col-md-6">
-            {{-- Yahan route change kiya hai kyunki 'admin.registration-status.index' exist nahi karta --}}
-            <a href="{{ route('admin.payments.verify', ['payment' => 1]) }}" class="stat-card" style="border-left:4px solid #2563eb;">
+            <a href="{{ route('admin.auction.room') }}" class="stat-card" style="border-left:4px solid #2563eb;">
                 <div class="d-flex justify-content-between align-items-start">
                     <div class="stat-icon" style="background:#f5f3ff;"><i class="bi bi-receipt" style="color:#8b5cf6;"></i></div>
                     <i class="bi bi-arrow-right stat-arrow"></i>
@@ -126,94 +144,94 @@
         </div>
     </div>
 
-  <div class="section-title">Auctions Progress</div>
+    <div class="section-title">Auctions Progress</div>
 
-<div class="row g-3 mb-4">
+    <div class="row g-3 mb-4">
 
-    {{-- New/Upcoming Auctions --}}
-    <div class="col-lg-4 col-md-6">
-        <a href="{{ route('job-posts.index') }}?status=upcoming" class="stat-card" style="border-left:4px solid #3b82f6;">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#eff6ff;">
-                    <i class="bi bi-briefcase" style="color:#3b82f6;"></i>
+        {{-- Upcoming --}}
+        <div class="col-lg-4 col-md-6">
+            <a href="{{ route('job-posts.index') }}?status=upcoming" class="stat-card" style="border-left:4px solid #3b82f6;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="stat-icon" style="background:#eff6ff;">
+                        <i class="bi bi-briefcase" style="color:#3b82f6;"></i>
+                    </div>
+                    <span style="font-size:10px;background:#eff6ff;color:#3b82f6;padding:2px 8px;border-radius:20px;font-weight:600;">Upcoming</span>
                 </div>
-                <span style="font-size:10px;background:#eff6ff;color:#3b82f6;padding:2px 8px;border-radius:20px;font-weight:600;">Upcoming</span>
-            </div>
-            <div class="stat-count">{{ $newJobCounts }}</div>
-            <div class="stat-label">New / Upcoming Auctions</div>
-        </a>
-    </div>
+                <div class="stat-count">{{ $newJobCounts }}</div>
+                <div class="stat-label">Upcoming Auctions</div>
+            </a>
+        </div>
 
-    {{-- Under Verification --}}
-    <div class="col-lg-4 col-md-6">
-        <a href="{{ route('job-posts.index') }}?status=under+verification" class="stat-card" style="border-left:4px solid #f59e0b;">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#fffbeb;">
-                    <i class="bi bi-hourglass-split" style="color:#f59e0b;"></i>
+        {{-- Under Verification --}}
+        <div class="col-lg-4 col-md-6">
+            <a href="{{ route('job-posts.index') }}?status=under_verification" class="stat-card" style="border-left:4px solid #f59e0b;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="stat-icon" style="background:#fffbeb;">
+                        <i class="bi bi-hourglass-split" style="color:#f59e0b;"></i>
+                    </div>
+                    <span style="font-size:10px;background:#fffbeb;color:#f59e0b;padding:2px 8px;border-radius:20px;font-weight:600;">Pending</span>
                 </div>
-                <span style="font-size:10px;background:#fffbeb;color:#f59e0b;padding:2px 8px;border-radius:20px;font-weight:600;">Pending</span>
-            </div>
-            <div class="stat-count">{{ $underVerifyCounts }}</div>
-            <div class="stat-label">Under Verification</div>
-        </a>
-    </div>
+                <div class="stat-count">{{ $underVerifyCounts }}</div>
+                <div class="stat-label">Under Verification</div>
+            </a>
+        </div>
 
-    {{-- Live Auctions --}}
-    <div class="col-lg-4 col-md-6">
-        <a href="{{ route('job-posts.index') }}?status=live" class="stat-card" style="border-left:4px solid #10b981;">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#ecfdf5;">
-                    <i class="bi bi-broadcast" style="color:#10b981;"></i>
+        {{-- Live ── only non-expired --}}
+        <div class="col-lg-4 col-md-6">
+            <a href="{{ route('job-posts.index') }}?status=live" class="stat-card" style="border-left:4px solid #10b981;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="stat-icon" style="background:#ecfdf5;">
+                        <i class="bi bi-broadcast" style="color:#10b981;"></i>
+                    </div>
+                    <span style="font-size:10px;background:#ecfdf5;color:#10b981;padding:2px 8px;border-radius:20px;font-weight:600;">● Live</span>
                 </div>
-                <span style="font-size:10px;background:#ecfdf5;color:#10b981;padding:2px 8px;border-radius:20px;font-weight:600;">● Live</span>
-            </div>
-            <div class="stat-count">{{ $liveAuctionCounts }}</div>
-            <div class="stat-label">Live Auctions</div>
-        </a>
-    </div>
+                <div class="stat-count">{{ $liveAuctionCounts }}</div>
+                <div class="stat-label">Live Auctions</div>
+            </a>
+        </div>
 
-    {{-- Closed Auctions --}}
-    <div class="col-lg-4 col-md-6">
-        <a href="{{ route('job-posts.index') }}?status=closed" class="stat-card" style="border-left:4px solid #6b7280;">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#f9fafb;">
-                    <i class="bi bi-archive" style="color:#6b7280;"></i>
+        {{-- Closed / Hired --}}
+        <div class="col-lg-4 col-md-6">
+            <a href="{{ route('job-posts.index') }}?status=closed" class="stat-card" style="border-left:4px solid #6b7280;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="stat-icon" style="background:#f9fafb;">
+                        <i class="bi bi-archive" style="color:#6b7280;"></i>
+                    </div>
+                    <span style="font-size:10px;background:#f9fafb;color:#6b7280;padding:2px 8px;border-radius:20px;font-weight:600;">Closed</span>
                 </div>
-                <span style="font-size:10px;background:#f9fafb;color:#6b7280;padding:2px 8px;border-radius:20px;font-weight:600;">Closed</span>
-            </div>
-            <div class="stat-count">{{ $closedAuctionCounts }}</div>
-            <div class="stat-label">Closed Auctions</div>
-        </a>
-    </div>
+                <div class="stat-count">{{ $closedAuctionCounts }}</div>
+                <div class="stat-label">Closed (Hired)</div>
+            </a>
+        </div>
 
-    {{-- Completed --}}
-    <div class="col-lg-4 col-md-6">
-        <a href="{{ route('job-posts.index') }}?status=completed" class="stat-card" style="border-left:4px solid #2563eb;">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#eff6ff;">
-                    <i class="bi bi-patch-check" style="color:#2563eb;"></i>
+        {{-- Completed --}}
+        <div class="col-lg-4 col-md-6">
+            <a href="{{ route('job-posts.index') }}?status=completed" class="stat-card" style="border-left:4px solid #2563eb;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="stat-icon" style="background:#eff6ff;">
+                        <i class="bi bi-patch-check" style="color:#2563eb;"></i>
+                    </div>
+                    <span style="font-size:10px;background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:20px;font-weight:600;">Done</span>
                 </div>
-                <span style="font-size:10px;background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:20px;font-weight:600;">Done</span>
-            </div>
-            <div class="stat-count">{{ $completedCounts }}</div>
-            <div class="stat-label">Completed Auctions</div>
-        </a>
-    </div>
+                <div class="stat-count">{{ $completedCounts }}</div>
+                <div class="stat-label">Completed Auctions</div>
+            </a>
+        </div>
 
-    {{-- Pending Refunds --}}
-    <div class="col-lg-4 col-md-6">
-        <a href="{{ route('billing.payments.index') }}?refund=pending" class="stat-card" style="border-left:4px solid #dc2626;">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="stat-icon" style="background:#fef2f2;">
-                    <i class="bi bi-arrow-counterclockwise" style="color:#dc2626;"></i>
+        {{-- Pending Refunds --}}
+        <div class="col-lg-4 col-md-6">
+            <a href="{{ route('billing.payments.index') }}?refund=pending" class="stat-card" style="border-left:4px solid #dc2626;">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="stat-icon" style="background:#fef2f2;">
+                        <i class="bi bi-arrow-counterclockwise" style="color:#dc2626;"></i>
+                    </div>
+                    <span style="font-size:10px;background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:20px;font-weight:600;">Pending</span>
                 </div>
-                <span style="font-size:10px;background:#fef2f2;color:#dc2626;padding:2px 8px;border-radius:20px;font-weight:600;">Pending</span>
-            </div>
-            <div class="stat-count">{{ $pendingRefunds }}</div>
-            <div class="stat-label">Pending Refunds</div>
-        </a>
-    </div>
+                <div class="stat-count">{{ $pendingRefunds }}</div>
+                <div class="stat-label">Pending Refunds</div>
+            </a>
+        </div>
 
-</div>
+    </div>
 </div>
 @endsection

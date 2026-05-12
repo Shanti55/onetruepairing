@@ -25,7 +25,7 @@
                     <th>#</th>
                     <th>Job Id</th>
                     <th>Title</th>
-                    <th>Auction Timing</th> 
+                    <th>Auction Timing</th>
                     @if(hasPermissionFor('jobs_status')) <th>Status</th> @endif
                     @if(hasPermissionFor('jobs_assigned_to')) <th>Assigned To</th> @endif
                     <th>Progress</th>
@@ -109,126 +109,220 @@
 <script>
 $(function () {
 
-    // ✅ URL FILTER
-    const urlParams = new URLSearchParams(window.location.search);
+    // ── URL FILTER ────────────────────────────────────────────────────────
+    const urlParams    = new URLSearchParams(window.location.search);
     const filterStatus = urlParams.get('status') || '';
 
-    // ✅ TITLE MAP (FINAL)
     const titleMap = {
         'upcoming'          : '📋 Upcoming Auctions',
         'live'              : '🟢 Live Auctions',
         'closed'            : '⚫ Closed (Hired)',
-        'under+verification': '🟣 Under Verification',
+        'under_verification': '🟣 Under Verification',
     };
 
     if (filterStatus && titleMap[filterStatus]) {
         $('h5.fw-semibold').text(titleMap[filterStatus]);
     }
 
-    // ✅ DATATABLE
+    // ── DATATABLE ─────────────────────────────────────────────────────────
     var table = $('#job-posts-table').DataTable({
         processing: true,
         serverSide: true,
         order: [[7, 'desc']],
         ajax: {
             url: "{{ route('job-posts.index') }}",
-            data: function (d) {
-                d.filter_status = filterStatus;
-            }
+            data: function (d) { d.filter_status = filterStatus; }
         },
         columns: [
-            {data: 'DT_RowIndex'},
-            {data: 'job_id'},
-            {data: 'title'},
-            {data: 'auction_timing', orderable:false},
+            { data: 'DT_RowIndex' },
+            { data: 'job_id' },
+            { data: 'title' },
+            { data: 'auction_timing', orderable: false },
             @if(hasPermissionFor('jobs_status'))
-            {data: 'status', orderable:false},
+            { data: 'status', orderable: false },
             @endif
             @if(hasPermissionFor('jobs_assigned_to'))
-            {data: 'assigned_to'},
+            { data: 'assigned_to' },
             @endif
-            {data: 'progress_bar', orderable:false},
-            {data: 'created_at'},
-            {data: 'action', orderable:false},
+            { data: 'progress_bar', orderable: false },
+            { data: 'created_at' },
+            { data: 'action', orderable: false },
         ]
     });
 
-    // ✅ ADD JOB
-    $('#add-job-post-btn').click(function(e){
+    // ── ADD JOB ───────────────────────────────────────────────────────────
+    $('#add-job-post-btn').click(function (e) {
         e.preventDefault();
         $('#jobPostForm')[0].reset();
         $('input[name="id"]').val('');
+        $('#jobPostModal .modal-title').text('Add Job Post'); // optional title reset
         new bootstrap.Modal('#jobPostModal').show();
     });
 
-    // ✅ SAVE JOB
-    $('#jobPostForm').submit(function(e){
+    // ── EDIT JOB ──────────────────────────────────────────────────────────
+    $('body').on('click', '.editJobPost', function () {
+        const id = $(this).data('id');
+
+        $.get("{{ url('admin/job-posts') }}/" + id, function (res) {
+            const job = res.job;
+
+            $('#jobPostForm')[0].reset();
+            $('input[name="id"]').val(job.id);
+            $('input[name="title"]').val(job.title);
+            $('textarea[name="description"]').val(job.description ?? '');
+            $('input[name="location"]').val(job.location ?? '');
+            $('input[name="budget"]').val(job.budget ?? '');
+
+            // ── Sync category checkboxes ──
+            $('input[name="categories[]"]').prop('checked', false);
+            if (res.categories && res.categories.length) {
+                res.categories.forEach(function (catId) {
+                    $('input[name="categories[]"][value="' + catId + '"]').prop('checked', true);
+                });
+            }
+
+            $('#jobPostModal .modal-title').text('Edit Job Post');
+            new bootstrap.Modal('#jobPostModal').show();
+
+        }).fail(function () {
+            alert('Could not load job data. Please try again.');
+        });
+    });
+
+    // ── DELETE JOB ────────────────────────────────────────────────────────
+    $('body').on('click', '.deleteJobPost', function () {
+        if (!confirm('Move this job to trash?')) return;
+
+        const id  = $(this).data('id');
+        const btn = $(this);
+        btn.prop('disabled', true);
+
+        $.ajax({
+            url  : "{{ url('admin/job-posts') }}/" + id,
+            type : 'DELETE',
+            data : { _token: "{{ csrf_token() }}" },
+            success: function (res) {
+                table.draw(false);
+                showToast(res.message, 'success');
+            },
+            error: function () {
+                btn.prop('disabled', false);
+                showToast('Delete failed! Please try again.', 'danger');
+            }
+        });
+    });
+
+    // ── SAVE JOB ──────────────────────────────────────────────────────────
+    $('#jobPostForm').submit(function (e) {
         e.preventDefault();
 
         let btn = $('#save');
         btn.prop('disabled', true).text('Saving...');
 
         $.post("{{ route('job-posts.storeOrUpdate') }}", $(this).serialize(),
-        function(){
+        function () {
             btn.prop('disabled', false).text('Save');
             bootstrap.Modal.getInstance('#jobPostModal').hide();
             table.draw();
-            alert('Saved!');
-        }).fail(function(){
+            showToast('Job saved successfully!', 'success');
+        }).fail(function (xhr) {
             btn.prop('disabled', false).text('Save');
-            alert('Error!');
+            const msg = xhr.responseJSON?.message || 'Something went wrong!';
+            showToast(msg, 'danger');
         });
     });
 
-    // ✅ AUCTION SUBMIT
-    $('#auctionLiveForm').submit(function(e){
+    // ── AUCTION SUBMIT ────────────────────────────────────────────────────
+    $('#auctionLiveForm').submit(function (e) {
         e.preventDefault();
 
-        let btn = $(this).find('button');
+        let btn      = $(this).find('button[type="submit"]');
+        let isExtend = $('#is_extend').is(':checked');
         btn.prop('disabled', true).text('Processing...');
 
-        let isExtend = $('#is_extend').is(':checked');
-
         $.post("{{ route('job-posts.makeAuctionLive') }}", {
-            _token: "{{ csrf_token() }}",
-            id: $('#auction_job_id').val(),
-            status: $('#target_status').val(),
-            is_extend: isExtend,
-            auction_start: !isExtend ? $('#auction_start').val().replace('T',' ') : null,
-            auction_end: !isExtend ? $('#auction_end').val().replace('T',' ') : null,
-            extend_days: isExtend ? $('#extend_days').val() : null
+            _token       : "{{ csrf_token() }}",
+            id           : $('#auction_job_id').val(),
+            status       : $('#target_status').val(),
+            is_extend    : isExtend,
+            auction_start: !isExtend ? $('#auction_start').val().replace('T', ' ') : null,
+            auction_end  : !isExtend ? $('#auction_end').val().replace('T', ' ')   : null,
+            extend_days  : isExtend  ? $('#extend_days').val()                      : null,
         },
-        function(res){
+        function (res) {
             btn.prop('disabled', false).text('Save Auction');
             bootstrap.Modal.getInstance('#auctionModal').hide();
             table.draw(false);
-            alert(res.message);
-        }).fail(function(xhr){
+            showToast(res.message, 'success');
+        }).fail(function (xhr) {
             btn.prop('disabled', false).text('Save Auction');
-            alert(xhr.responseJSON?.message || 'Error');
+            showToast(xhr.responseJSON?.message || 'Error!', 'danger');
         });
     });
 
-    // ✅ EXTEND TOGGLE
-    $('#is_extend').change(function(){
+    // ── EXTEND TOGGLE ─────────────────────────────────────────────────────
+    $('#is_extend').change(function () {
         $('#extend_section').toggle(this.checked);
         $('#fresh_live_section').toggle(!this.checked);
     });
 
-    // ✅ GLOBAL OPEN MODAL
-    window.openAuctionModal = function(id, start, end, status){
+    // ── GLOBAL: Open Auction Modal ────────────────────────────────────────
+    window.openAuctionModal = function (id, start, end, status) {
         $('#auction_job_id').val(id);
-        $('#auction_start').val(start ? start.replace(' ','T') : '');
-        $('#auction_end').val(end ? end.replace(' ','T') : '');
+        $('#auction_start').val(start ? start.replace(' ', 'T') : '');
+        $('#auction_end').val(end   ? end.replace(' ', 'T')   : '');
         $('#target_status').val(status || 'pending');
-
         $('#is_extend').prop('checked', false);
         $('#extend_section').hide();
         $('#fresh_live_section').show();
-
         new bootstrap.Modal('#auctionModal').show();
+    };
+
+
+    // ── UPDATE STATUS ─────────────────────────────────────────────────────
+$('body').on('click', '.updateStatus', function () {
+    const jobId    = $(this).attr('id');          // id attribute se job id
+    const status   = $(this).data('job_status');  // data-job_status se status
+    const btn      = $(this);
+
+    btn.prop('disabled', true);
+
+    $.post("{{ route('job-posts.updateStatus') }}", {
+        _token : "{{ csrf_token() }}",
+        id     : jobId,
+        status : status,
+    },
+    function (res) {
+        btn.prop('disabled', false);
+        table.draw(false);               // row refresh karo
+        showToast(res.message || 'Status updated!', 'success');
+    }).fail(function () {
+        btn.prop('disabled', false);
+        showToast('Status update failed!', 'danger');
+    });
+});
+
+    // ── TOAST Helper ──────────────────────────────────────────────────────
+    function showToast(message, type) {
+        const bg    = type === 'success' ? 'bg-success' : 'bg-danger';
+        const toast = $(`
+            <div class="toast align-items-center text-white ${bg} border-0 shadow"
+                 role="alert" style="min-width:260px;">
+                <div class="d-flex">
+                    <div class="toast-body fw-semibold">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                            data-bs-dismiss="toast"></button>
+                </div>
+            </div>`);
+        if (!$('#toast-container').length) {
+            $('body').append('<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:9999;"></div>');
+        }
+        $('#toast-container').append(toast);
+        new bootstrap.Toast(toast[0], { delay: 3000 }).show();
+        toast[0].addEventListener('hidden.bs.toast', () => toast.remove());
     }
 
 });
 </script>
 @endpush
+

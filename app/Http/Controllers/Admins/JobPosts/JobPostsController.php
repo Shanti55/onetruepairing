@@ -16,12 +16,10 @@ class JobPostsController extends Controller
 {
     public function index(Request $request)
     {
-        // Permission Check
-        if(!canAccessModule('jobs')) {
+        if (!canAccessModule('jobs')) {
             return abort(404);
         }
 
-        // Fetching Service Providers for the assignment dropdown
         $serviceProviders = User::has('serviceproviderprofile')
             ->with('serviceproviderprofile')
             ->where('role', 'service-provider')
@@ -30,51 +28,56 @@ class JobPostsController extends Controller
             ->get();
 
         if ($request->ajax()) {
-            $query = JobPost::query()->latest();
+            $query  = JobPost::query()->latest();
+            $status = $request->get('filter_status');
 
-            // ✅ Dashboard/URL Filters Logic
-        $status = $request->get('filter_status');
+            if ($status) {
+                switch ($status) {
 
-if ($status) {
+                    // ✅ Upcoming — auction scheduled but not started yet
+                    case 'upcoming':
+                        $query->where('auction_status', 'pending');
+                        break;
 
-    switch ($status) {
+                    // ✅ Live — open AND auction_end has NOT passed yet
+                    case 'live':
+                        $query->where('auction_status', 'open')
+                              ->where('auction_end', '>', now());
+                        break;
 
-        case 'upcoming':
-            $query->where('auction_status', 'pending');
-            break;
+                    // ✅ Under Verification — closed, not yet assigned
+                    case 'under_verification':
+                        $query->where('auction_status', 'closed')
+                              ->whereNull('assigned_to')
+                              ->where('status', 'under verification');
+                        break;
 
-        case 'live':
-            $query->where('auction_status', 'open');
-            break;
+                    // ✅ Closed / Hired — assigned to someone
+                    case 'closed':
+                        $query->where('auction_status', 'closed')
+                              ->whereNotNull('assigned_to')
+                              ->where('status', 'assigned');
+                        break;
+                }
+            }
 
-        case 'under_verification':
-            $query->where('auction_status', 'closed')
-                  ->whereNull('assigned_to')
-                  ->where('status', 'under verification'); // ✅ IMPORTANT FIX
-            break;
-
-        case 'closed':
-            $query->where('auction_status', 'closed')
-                  ->whereNotNull('assigned_to')
-                  ->where('status', 'assigned'); // ✅ IMPORTANT FIX
-            break;
-    }
-}
             $jobs = $query->get();
 
             return DataTables::of($jobs)
                 ->addIndexColumn()
                 ->addColumn('job_id', function ($row) {
-                    return '<span class="text-secondary">EL#'.str_pad($row->id, 5, '0', STR_PAD_LEFT).'</span>';
+                    return '<span class="text-secondary">EL#' . str_pad($row->id, 5, '0', STR_PAD_LEFT) . '</span>';
                 })
                 ->addColumn('title', function ($row) {
                     return view('admin-panel.job-posts._title', ['job' => $row])->render();
                 })
-                ->addColumn('auction_timing', function($row) {
-                    if(!$row->auction_start) return '<span class="badge bg-light text-dark border">Not Scheduled</span>';
+                ->addColumn('auction_timing', function ($row) {
+                    if (!$row->auction_start) {
+                        return '<span class="badge bg-light text-dark border">Not Scheduled</span>';
+                    }
                     return '<div class="small">
-                                <span class="text-success"><b>Start:</b> '. date('d M, h:i A', strtotime($row->auction_start)) .'</span><br>
-                                <span class="text-danger"><b>End:</b> '. date('d M, h:i A', strtotime($row->auction_end)) .'</span>
+                                <span class="text-success"><b>Start:</b> ' . date('d M, h:i A', strtotime($row->auction_start)) . '</span><br>
+                                <span class="text-danger"><b>End:</b> ' . date('d M, h:i A', strtotime($row->auction_end)) . '</span>
                             </div>';
                 })
                 ->addColumn('status', function ($row) {
@@ -93,72 +96,62 @@ if ($status) {
                 ->make(true);
         }
 
-        $users = User::all();
+        $users      = User::all();
         $categories = Category::all();
 
         return view('admin-panel.job-posts.index', compact('users', 'serviceProviders', 'categories'));
     }
 
     public function makeAuctionLive(Request $request)
-{
-    $isExtend = filter_var($request->is_extend, FILTER_VALIDATE_BOOLEAN);
+    {
+        $isExtend = filter_var($request->is_extend, FILTER_VALIDATE_BOOLEAN);
 
-    $validator = Validator::make($request->all(), [
-        'id'     => 'required|exists:job_posts,id',
-        'status' => 'required|in:pending,open,closed',
-    ]);
+        $validator = Validator::make($request->all(), [
+            'id'     => 'required|exists:job_posts,id',
+            'status' => 'required|in:pending,open,closed',
+        ]);
 
-    if ($validator->fails()) {
-        return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
-    }
-
-    $job = JobPost::findOrFail($request->id);
-
-    // ✅ Date Handling
-    if ($isExtend) {
-        $currentEnd = $job->auction_end ? Carbon::parse($job->auction_end) : Carbon::now();
-        $endDate    = $currentEnd->addDays((int)($request->extend_days ?? 1));
-        $startDate  = $job->auction_start ?? Carbon::now();
-    } else {
-        if (!$request->auction_start || !$request->auction_end) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Please select both dates.'
-            ], 422);
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
         }
 
-        $startDate = Carbon::parse($request->auction_start)->toDateTimeString();
-        $endDate   = Carbon::parse($request->auction_end)->toDateTimeString();
+        $job = JobPost::findOrFail($request->id);
+
+        if ($isExtend) {
+            $currentEnd = $job->auction_end ? Carbon::parse($job->auction_end) : Carbon::now();
+            $endDate    = $currentEnd->addDays((int) ($request->extend_days ?? 1));
+            $startDate  = $job->auction_start ?? Carbon::now();
+        } else {
+            if (!$request->auction_start || !$request->auction_end) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Please select both start and end dates.',
+                ], 422);
+            }
+            $startDate = Carbon::parse($request->auction_start)->toDateTimeString();
+            $endDate   = Carbon::parse($request->auction_end)->toDateTimeString();
+        }
+
+        if ($request->status === 'closed') {
+            $job->update([
+                'auction_start'  => $startDate,
+                'auction_end'    => $endDate,
+                'auction_status' => 'closed',
+                'status'         => 'under verification',
+            ]);
+            $message = 'Auction closed. Moved to Under Verification.';
+        } else {
+            $job->update([
+                'auction_start'  => $startDate,
+                'auction_end'    => $endDate,
+                'auction_status' => $request->status,
+                'status'         => $request->status,
+            ]);
+            $message = 'Auction updated to ' . ucfirst($request->status) . '!';
+        }
+
+        return response()->json(['status' => 'success', 'message' => $message]);
     }
-
-    // ✅ 🎯 MAIN LOGIC (IMPORTANT FIX)
-    if ($request->status == 'closed') {
-        // 👉 Auction band hua → Under Verification
-        $job->update([
-            'auction_start'  => $startDate,
-            'auction_end'    => $endDate,
-            'auction_status' => 'closed',
-            'status'         => 'under verification',
-        ]);
-
-        $message = 'Auction closed. Moved to Under Verification.';
-    } else {
-        // 👉 Pending / Open
-        $job->update([
-            'auction_start'  => $startDate,
-            'auction_end'    => $endDate,
-            'auction_status' => $request->status, // pending / open
-            'status'         => $request->status,
-        ]);
-
-        $message = 'Auction updated to ' . ucfirst($request->status) . '!';
-    }
-
-    return response()->json([
-        'status'  => 'success',
-        'message' => $message
-    ]);
-}
 
     public function updateStatus(Request $request)
     {
@@ -198,7 +191,7 @@ if ($status) {
     public function destroy($id)
     {
         $job = JobPost::findOrFail($id);
-        $job->delete(); 
+        $job->delete();
         return response()->json(['status' => 'success', 'message' => 'Job moved to trash.']);
     }
 
@@ -227,8 +220,8 @@ if ($status) {
             $jobs = JobPost::onlyTrashed()->latest('deleted_at')->get();
             return DataTables::of($jobs)
                 ->addIndexColumn()
-                ->addColumn('job_id', fn($r) => 'EL#' . str_pad($r->id, 5, '0', STR_PAD_LEFT))
-                ->addColumn('deleted_at', fn($r) => $r->deleted_at->diffForHumans())
+                ->addColumn('job_id', fn ($r) => 'EL#' . str_pad($r->id, 5, '0', STR_PAD_LEFT))
+                ->addColumn('deleted_at', fn ($r) => $r->deleted_at->diffForHumans())
                 ->addColumn('action', function ($r) {
                     return '
                         <button class="btn btn-sm btn-success restore-btn" data-id="' . $r->id . '">
@@ -273,8 +266,8 @@ if ($status) {
             'job'             => $job,
             'serviceprovider' => $serviceprovider,
             'profile'         => $serviceprovider->serviceproviderprofile()
-                                    ? $serviceprovider->serviceproviderprofile()->first()
-                                    : null,
+                ? $serviceprovider->serviceproviderprofile()->first()
+                : null,
         ]);
     }
 

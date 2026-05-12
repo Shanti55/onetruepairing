@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Admins;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // DB use karne ke liye zaruri hai
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class MyNotificationsController extends Controller
 {
@@ -64,7 +65,7 @@ class MyNotificationsController extends Controller
         return response()->json(['status' => 'ok', 'message' => 'All read notifications moved to trash.']);
     }
 
-    // ── Trash index: Sirf trash wali notifications dikhayein
+    // ── Trash index: View page (purana wala — rakhein as is)
     public function trash()
     {
         $notifications = auth()->user()->notifications()
@@ -74,8 +75,69 @@ class MyNotificationsController extends Controller
         return view('admin-panel.notifications.trash', compact('notifications'));
     }
 
+    // ── ✅ Trash DataTable: Combined trash page ke liye JSON response
+    public function trashDatatable(Request $request)
+    {
+        $query = DB::table('notifications')
+                    ->where('notifiable_id', auth()->id())
+                    ->whereNotNull('deleted_at')
+                    ->orderBy('deleted_at', 'desc');
+
+        $total = $query->count();
+
+        // Search filter
+        if ($search = $request->input('search.value')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('data', 'like', "%{$search}%");
+            });
+        }
+
+        $filtered = $query->count();
+
+        $notifications = $query
+            ->offset($request->input('start', 0))
+            ->limit($request->input('length', 10))
+            ->get();
+
+        $start = $request->input('start', 0);
+
+        $data = $notifications->map(function ($n, $i) use ($start) {
+            $payload = json_decode($n->data, true);
+
+            $title   = $payload['title']   ?? $payload['subject'] ?? '—';
+            $message = $payload['message'] ?? $payload['body']    ?? '—';
+
+            $deletedAt = Carbon::parse($n->deleted_at)->format('d M Y, h:i A');
+
+            $action = '
+                <button class="btn btn-sm btn-outline-success notif-restore-btn"
+                        data-id="' . $n->id . '">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>Restore
+                </button>
+                <button class="btn btn-sm btn-outline-danger notif-force-delete-btn ms-1"
+                        data-id="' . $n->id . '">
+                    <i class="bi bi-trash3 me-1"></i>Delete Forever
+                </button>
+            ';
+
+            return [
+                'DT_RowIndex' => $start + $i + 1,
+                'title'       => e($title),
+                'message'     => \Illuminate\Support\Str::limit(e($message), 60),
+                'deleted_at'  => $deletedAt,
+                'action'      => $action,
+            ];
+        });
+
+        return response()->json([
+            'draw'            => intval($request->input('draw')),
+            'recordsTotal'    => $total,
+            'recordsFiltered' => $filtered,
+            'data'            => $data,
+        ]);
+    }
+
     // ── Restore from trash: Single notification wapas layein
-    // NOTE: Isse sirf EK BAAR hi rakhein file mein
     public function restore($id)
     {
         DB::table('notifications')

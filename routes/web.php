@@ -229,6 +229,7 @@ Route::middleware(['auth:web'])->group(function () {
 
         // ── Job Posts — specific routes PEHLE, {job} wale BAAD MEIN ──────────
         Route::get('job-posts/trash', [JobPostsController::class, 'trash'])->name('job-posts.trash');
+        
         Route::post('job-posts/bulk-delete', [JobPostsController::class, 'bulkDelete'])->name('job-posts.bulkDelete');
         Route::post('job-posts/assign-winner', [JobPostsController::class, 'assignWinner'])->name('job-posts.assignWinner');
         Route::post('job-posts/make-auction-live', [JobPostsController::class, 'makeAuctionLive'])->name('job-posts.makeAuctionLive');
@@ -257,6 +258,12 @@ Route::middleware(['auth:web'])->group(function () {
 
        
 // ── Admin Notifications — SAHI ORDER ─────────────────────────────────
+// Job Posts trash VIEW route — existing trash route ke paas add karo
+
+// ✅ SAHI — sirf path
+Route::get('notifications/trash/datatable',
+    [\App\Http\Controllers\Admins\MyNotificationsController::class, 'trashDatatable'])
+    ->name('admins.notifications.trash.datatable');
 Route::get('notifications/trash', [\App\Http\Controllers\Admins\MyNotificationsController::class, 'trash'])->name('admins.notifications.trash');
 Route::post('notifications/mark-all-read', [\App\Http\Controllers\Admins\MyNotificationsController::class, 'markAllRead'])->name('admins.notifications.markAllRead');
 Route::post('notifications/restore-all', [\App\Http\Controllers\Admins\MyNotificationsController::class, 'restoreAll'])->name('admins.notifications.restoreAll'); // ✅ {id} se PEHLE
